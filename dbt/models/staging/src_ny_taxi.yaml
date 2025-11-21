@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: ny_taxi
-    database: ny_taxi # sama dengan dbname di profiles.yml
-    schema: public # schema tabel raw (tabel dari Postgres)
+    database: ny_taxi
+    schema: public
     tables:
-      - name: raw_yellow_taxi_data # nama tabel persis di Postgres
+      - name: raw_yellow_taxi_data
