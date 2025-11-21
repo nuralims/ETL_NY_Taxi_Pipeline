@@ -29,7 +29,7 @@ Pipeline ini menjalankan alur end-to-end untuk memuat data Yellow Taxi ke Postgr
    ```powershell
    git clone <repo-url>
    cd ETL_NY_TAXI
-   mkdir data logs plugins secrets tmp
+   mkdir data logs plugins secrets
    ```
 2. **Masukkan kredensial** ke `secrets/<file>.json` (atau nama lain) dan pastikan `.env`/Airflow env memuat `GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/secrets/<file>.json`.
 3. **Konfigurasi variabel lingkungan** (`.env`):
