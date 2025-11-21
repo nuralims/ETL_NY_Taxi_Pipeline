@@ -13,12 +13,12 @@ from fastparquet import ParquetFile
 import wget
 
 default_args = {
-    "owner": "Muhammad Nuralimsyah",
+    "owner": "your name",
     "start_date": datetime(2025, 11, 13),
     "depends_on_past": False,
     "email_on_failure": False,
     "email_on_retry": False,
-    "email": "alimsyah071002@gmail.com",
+    "email": "your.email@example.com",
     "retries": 1,
     "retry_delay": timedelta(minutes=5)
 }
@@ -35,7 +35,7 @@ def postgres_connect():
 
 def bigquery_connect():
     try:
-        key_path = "/opt/airflow/secrets/terraform-demo-475203-42699b6cec5f.json"
+        key_path = "/opt/airflow/secrets/<file>.json"
         credentials = service_account.Credentials.from_service_account_file(
             key_path,
         )
@@ -100,12 +100,10 @@ def insert_parquet_to_postgres():
 
 def transfer_data_postgres_to_bigquery(batch_size: int = 50000):
     try:
-        # Connect to Postgres
         pg_engine = postgres_connect()
 
-        # Connect to BigQuery
         bq_client = bigquery_connect()
-        table_id = "terraform-demo-475203.ny_taxi.fact_trips_yellow_taxi_data"
+        table_id = "<dataset>.ny_taxi.fact_trips_yellow_taxi_data"
 
         query = "SELECT * FROM public_mart.fact_trips LIMIT 500"
 
@@ -135,7 +133,7 @@ def transfer_data_postgres_to_bigquery(batch_size: int = 50000):
                 table_id,
                 job_config=job_config
             )
-            job.result()  # tunggu sampai selesai
+            job.result()
 
             total_rows_loaded += len(chunk_df)
             logging.info(f"Finished chunk {chunk_index}, total loaded so far: {total_rows_loaded} rows")
@@ -189,4 +187,4 @@ with DAG(
         op_kwargs={"batch_size": 50000},
     )
     
-    transform_data
+    extract_data >> data_to_pg >> dbt_run_staging >> dbt_run_marts >> transform_data
