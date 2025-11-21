@@ -1,0 +1,12 @@
+ny_taxi:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: host.docker.internal
+      user: airflow
+      password: airflow
+      port: 5434
+      dbname: ny_taxi
+      schema: public
+      threads: 4

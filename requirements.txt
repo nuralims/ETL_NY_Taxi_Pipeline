@@ -1,0 +1,8 @@
+pandasql
+fastparquet
+pyarrow
+jupyter
+dbt-core
+dbt-bigquery
+dbt-postgres
+wget

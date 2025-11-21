@@ -1,0 +1,18 @@
+# Local environment configuration
+.env
+
+# Airflow/DBT runtime artifacts
+config/
+dags/__pycache__/
+data/yellow_tripdata_2025-01.parquet
+logs/
+plugins/
+tmp/
+dbt/logs/
+
+# Secrets and credentials
+secrets/terraform-demo-475203-42699b6cec5f.json
+
+# Misc
+*.pyc
+__pycache__/

@@ -1,0 +1,16 @@
+name: "ny_taxi"
+version: "1.0.0"
+config-version: 2
+
+profile: "ny_taxi"
+
+model-paths: ["models"]
+
+models:
+  ny_taxi:
+    staging:
+      +materialized: view
+      +schema: stg
+    marts:
+      +materialized: table
+      +schema: mart

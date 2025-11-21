@@ -1,0 +1,1 @@
+{"_invocation_id": "43f47a3c-eaa6-48cc-b1b8-52506f2f1d43", "linked": {"0": {"name": "source.ny_taxi.ny_taxi.raw_yellow_taxi_data", "type": "source", "succ": [1]}, "1": {"name": "model.ny_taxi.stg_yellow_tripdata", "type": "model", "succ": [2]}, "2": {"name": "model.ny_taxi.fact_trips", "type": "model"}}}
