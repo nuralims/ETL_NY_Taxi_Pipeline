@@ -181,10 +181,10 @@ with DAG(
         )
     )
     
-    transform_data = PythonOperator(
-        task_id="transform_data",
+    load_data = PythonOperator(
+        task_id="load_data_to_bigquery",
         python_callable=transfer_data_postgres_to_bigquery,
         op_kwargs={"batch_size": 50000},
     )
     
-    extract_data >> data_to_pg >> dbt_run_staging >> dbt_run_marts >> transform_data
+    extract_data >> data_to_pg >> dbt_run_staging >> dbt_run_marts >> load_data
