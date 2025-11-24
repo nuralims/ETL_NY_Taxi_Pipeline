@@ -10,7 +10,7 @@ Pipeline ini menjalankan alur end-to-end untuk memuat data Yellow Taxi ke Postgr
   2. `extract_data_to_pg` &mdash; memecah Row Group Parquet menjadi batch dan menulis ke Postgres tabel `raw_yellow_taxi_data`.
   3. `dbt_run_staging` &mdash; menjalankan model staging `stg_yellow_tripdata` untuk menormalkan kolom.
   4. `dbt_run_marts` &mdash; membangun mart `fact_trips` (dan dimensi lain) di BigQuery.
-  5. `transform_data` &mdash; menarik dataset mart (`public_mart.fact_trips`) dari Postgres secara bertahap dan mengirimnya ke tabel `<dataset>.ny_taxi.fact_trips_yellow_taxi_data` memakai BigQuery client.
+  5. `load_data` &mdash; menarik dataset mart (`public_mart.fact_trips`) dari Postgres secara bertahap dan mengirimnya ke tabel `<dataset>.ny_taxi.fact_trips_yellow_taxi_data` memakai BigQuery client.
 - **dbt Project (`dbt/`)** menyediakan model staging, dimension, dan fact. Contoh baru: `models/marts/dim_pickup_date.sql` untuk tabel kalender pickup.
 
 ## Prasyarat
@@ -55,7 +55,7 @@ Pipeline ini menjalankan alur end-to-end untuk memuat data Yellow Taxi ke Postgr
 | `extract_data_to_pg` | `PythonOperator` | Membaca Parquet per Row Group (1.000 baris/batch) lalu menulis ke `raw_yellow_taxi_data` di Postgres.                                                             |
 | `dbt_run_staging`    | `BashOperator`   | `dbt run --select stg_yellow_tripdata` untuk membuat view staging di BigQuery.                                                                                    |
 | `dbt_run_marts`      | `BashOperator`   | Menjalankan model marts (`fact_trips`, `dim_pickup_date`, dll).                                                                                                   |
-| `transform_data`     | `PythonOperator` | Membaca tabel mart `public_mart.fact_trips` dari Postgres dengan batch configurable (`op_kwargs`) dan memuat ke BigQuery menggunakan `load_table_from_dataframe`. |
+| `load_data`          | `PythonOperator` | Membaca tabel mart `public_mart.fact_trips` dari Postgres dengan batch configurable (`op_kwargs`) dan memuat ke BigQuery menggunakan `load_table_from_dataframe`. |
 
 > **Tips**: Jika ukuran data besar, gunakan `batch_size` yang lebih besar (contoh 50.000) dan batasi query (`WHERE pickup_date >= ...`, `LIMIT ...`) agar worker tidak keluar dengan exit code `-9`.
 
@@ -71,7 +71,7 @@ Pipeline ini menjalankan alur end-to-end untuk memuat data Yellow Taxi ke Postgr
         LIMIT 200000
   """
   ```
-- Parameter `batch_size` dapat diubah lewat `op_kwargs` ketika mendefinisikan task `transform_data`.
+- Parameter `batch_size` dapat diubah lewat `op_kwargs` ketika mendefinisikan task `load_data`.
 
 ## Struktur dbt
 
@@ -100,7 +100,7 @@ dbt/
 
 ## Monitoring & Troubleshooting
 
-- **Zombie / exit code -9**: biasanya karena worker OOM atau job terlalu lama. Solusi: tingkatkan `batch_size`, batasi query, naikkan resource Docker Desktop, atau set `execution_timeout` / `retries` pada task `transform_data`.
+- **Zombie / exit code -9**: biasanya karena worker OOM atau job terlalu lama. Solusi: tingkatkan `batch_size`, batasi query, naikkan resource Docker Desktop, atau set `execution_timeout` / `retries` pada task `load_data`.
 - **Konektivitas BigQuery**: pastikan file JSON terbaca dan service account punya peran `roles/bigquery.dataEditor` + `roles/bigquery.jobUser`.
 
 ## Langkah Lanjutan
