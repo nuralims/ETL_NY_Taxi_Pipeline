@@ -53,7 +53,7 @@ Pipeline ini menjalankan alur end-to-end untuk memuat data Yellow Taxi ke Postgr
 | -------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `extract_data`       | `BashOperator`   | Mengunduh Parquet Yellow Taxi ke volume data.                                                                                                                     |
 | `extract_data_to_pg` | `PythonOperator` | Membaca Parquet per Row Group (1.000 baris/batch) lalu menulis ke `raw_yellow_taxi_data` di Postgres.                                                             |
-| `dbt_run_staging`    | `BashOperator`   | `dbt run --select stg_yellow_tripdata` untuk membuat view staging di BigQuery.                                                                                    |
+| `dbt_run_staging`    | `BashOperator`   | `dbt run --select stg_yellow_tripdata` untuk membuat view staging di Database Postgre.                                                                            |
 | `dbt_run_marts`      | `BashOperator`   | Menjalankan model marts (`fact_trips`, `dim_pickup_date`, dll).                                                                                                   |
 | `load_data`          | `PythonOperator` | Membaca tabel mart `public_mart.fact_trips` dari Postgres dengan batch configurable (`op_kwargs`) dan memuat ke BigQuery menggunakan `load_table_from_dataframe`. |
 
